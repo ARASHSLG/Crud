@@ -12,14 +12,25 @@
 
 from tkinter import *
 from pymongo import MongoClient
+# server set
+Client = MongoClient("localhost", 27017)
+db = Client["Crud"]
+persons = db["Persons"]
 
+# main task
 win = Tk()
 win.geometry("800x600")
 win.title("Crud Project")
+win.configure(background="#22011c", height=100, width=100, borderwidth=1, border=2)
+
+# txt
 name = Entry(cursor="", width=25, fg="black", background="#eeeee4")
+label = win.
 name.place(x=100 , y=100)
 win.iconbitmap(r"icons/king_icon-icons.com_69359.ico")
-win.configure(background="#22011c", height=100, width=100, borderwidth=1, border=2)
+
+# lbl
+
 
 # btn
 # registerBtn=
