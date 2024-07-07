@@ -19,9 +19,35 @@ db = Client["Crud"]
 persons = db["Persons"]
 
 # defs
-def changebuttonstyle(event):
-    pass
+
+
+def change_button_style(event):
+    registerBtn.configure(bg="#033cef", fg="white")
+
+
+def default_btnstyles(event):
+    registerBtn.configure(fg="black", background="#eeeee4")
+
+
+def read(person):
+    persons.insert_one(person)
+
+
+def onclick_read(event):
+    person = {"name": name.get(),
+              "family": family.get(),
+              "age": age.get(),
+              "major" : major.get()}
+    read(person)
+
+
+def alldata_read():
+    alldata = persons.find()
+    print(alldata[0])
+
+
 # main task
+
 win = Tk()
 win.geometry("950x600")
 win.title("Crud Project")
@@ -60,6 +86,9 @@ majorlabel.place(x=25, y=280)
 # btn
 registerBtn = Button(win, cursor="hand2", text='submit', bd=5, font=("arial", 15), width=12, fg="black", background="#eeeee4")
 registerBtn.place(x=165, y=340)
+registerBtn.bind("<Enter>", change_button_style)
+registerBtn.bind("<Leave>", default_btnstyles)
+
 
 # table
 table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="headings")
