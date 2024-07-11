@@ -1,4 +1,4 @@
-import tkinter
+import tkinter.messagebox
 from tkinter import ttk
 from tkinter import *
 from pymongo import MongoClient
@@ -11,18 +11,27 @@ persons = db['Persons']
 
 
 def read(person):
-    persons.insert_one(person)
+    if int(person["age"]) >= 18:
+        persons.insert_one(person)
 
 
-def onclick_read(event):
-    person = {"name": name.get(),
-              "family": family.get(),
-              "age": age.get(),
-              "major": major.get()}
-    read(person)
-    alldata = alldata_read()
-    for data in alldata:
-        add_data_totable(data)
+def onclick_read(event=None):
+    if registerBtn.cget("state") == NORMAL:
+        try:
+            if Exist == False :
+                person = {"name": name.get(),
+                          "family": family.get(),
+                          "age": age.get(),
+                          "major": combobox.get()}
+                read(person)
+                alldata = alldata_read()
+                cleandata()
+                for data in alldata:
+                    add_data_totable(data)
+                empty_textbox()
+                tkinter.messagebox.showinfo("error", "successful sign in")
+        except ValueError or KeyError:
+            print("try again")
 
 
 def add_data_totable(person):
@@ -33,6 +42,29 @@ def alldata_read():
     alldata = persons.find()
     return alldata
 
+
+def cleandata():
+    for j in table.get_children():
+        table.delete(j)
+
+
+def empty_textbox():
+    NAME.set("")
+    FAMILY.set("")
+    AGE.set("")
+
+def btn_activation(event=None):
+    if name.get() != "" and family.get() != "" and age.get() != "" and combobox.get() != "":
+        registerBtn.configure(state=NORMAL)
+    else:
+        registerBtn.configure(state=DISABLED)
+
+def Exist(person):
+    alldata = alldata_read()
+    for data in alldata:
+        if data["name"] == person["name"] and data["family"] == person['family'] and data['age'] == person['age'] and data['major'] == person['major'] :
+            return True
+    return False
 # main task
 
 
@@ -42,18 +74,28 @@ win.title("Crud Project")
 win.iconbitmap(r"icons/king_icon-icons.com_69359.ico")
 win.configure(background="#22011c", height=100, width=100, borderwidth=1, border=2)
 
-# texts
-name = Entry(win, bd=5, font=("arial", 15), justify="center", width=25, fg="black", bg="#eeeee4")
-name.place(x=100, y=100)
+NAME = StringVar()
+FAMILY = StringVar()
+AGE = StringVar()
 
-family = Entry(win, bd=5, font=("arial", 15), justify="center", width=25, fg="black", background="#eeeee4")
+# texts
+name = Entry(win, bd=5, font=("arial", 15), justify="center", width=25, fg="black", bg="#eeeee4", textvariable=NAME)
+name.place(x=100, y=100)
+name.bind("<KeyRelease>", btn_activation)
+
+
+family = Entry(win, bd=5, font=("arial", 15), justify="center", width=25,
+               fg="black", background="#eeeee4", textvariable=FAMILY)
 family.place(x=100, y=160)
 
-age = Entry(win, bd=5, font=("arial", 15), justify="center", width=25, fg="black", background="#eeeee4")
+age = Entry(win, bd=5, font=("arial", 15), justify="center", width=25,
+            fg="black", background="#eeeee4", textvariable=AGE)
 age.place(x=100, y=220)
 
-major = Entry(win, bd=5, font=("arial", 15), justify="center", width=25, fg="black", background="#eeeee4")
-major.place(x=100, y=280)
+combobox = ttk.Combobox(win, font=("arial", 15), justify="center",width=24,
+              foreground="black", background="#eeeee4")
+combobox['values'] = ["computer", "electrical", 'chemistry']
+combobox.place(x=100, y=280)
 
 # labels
 welcomelabel = tkinter.Label(win, text="Welcome To Crud MiniProject",
@@ -76,8 +118,9 @@ majorlabel.place(x=25, y=280)
 registerBtn = Button(win, cursor="hand2", text='submit', bd=5,
                      font=("arial", 15), width=12, fg="black", background="#eeeee4")
 registerBtn.place(x=165, y=340)
-registerBtn.bind("<Enter>", lambda event: registerBtn.configure(bg="#033cef", fg="white"))
-registerBtn.bind("<Leave>", lambda event: registerBtn.configure(fg="black", background="#eeeee4"))
+registerBtn.configure(textvariable=DISABLED)
+registerBtn.bind("<Enter>", lambda event=None: registerBtn.configure(bg="#033cef", fg="white"))
+registerBtn.bind("<Leave>", lambda event=None: registerBtn.configure(fg="black", background="#eeeee4"))
 registerBtn.bind("<Button-1>", onclick_read)
 registerBtn.bind()
 
@@ -86,7 +129,7 @@ table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="head
 columns = ("name", "family", "age", "major")
 for i in columns:
     table.heading(i, text=i.title())
-    table.column(i, width=100)
+    table.column(i, width=100, anchor="center")
 
 table.place(x=500, y=75)
 
