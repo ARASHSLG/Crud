@@ -3,9 +3,9 @@ from tkinter import ttk
 from tkinter import *
 from pymongo import MongoClient
 # database set
-Client = MongoClient("localhost", 27017)
-db = Client["Crud"]
-persons = db["Persons"]
+Client = MongoClient('localhost', 27017)
+db = Client['Crud']
+persons = db['Persons']
 
 # functions
 
