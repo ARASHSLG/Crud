@@ -1,14 +1,3 @@
-# from tkinter import *
-# from pymongo import MongoClient
-# client = MongoClient("localhost", 27017)
-# db = client['Crud']
-# persons = db['Person']
-# win = Tk()
-# win.geometry("800x200")
-# win.title('Crud Project')
-# win.iconbitmap(r"C:\Users\arash\Desktop\Coding\Python\crud\icons\Screenshot 2024-05-23 013137.png")
-#
-# win.mainloop()
 import tkinter
 from tkinter import ttk
 from tkinter import *
@@ -37,7 +26,7 @@ def onclick_read(event):
 
 
 def add_data_totable(person):
-    table.insert("", "end", values=[person['name'],person['family'], person['age'], person['major']])
+    table.insert("", "end", values=[person['name'], person['family'], person['age'], person['major']])
 
 
 def alldata_read():
@@ -90,7 +79,7 @@ registerBtn.place(x=165, y=340)
 registerBtn.bind("<Enter>", lambda event: registerBtn.configure(bg="#033cef", fg="white"))
 registerBtn.bind("<Leave>", lambda event: registerBtn.configure(fg="black", background="#eeeee4"))
 registerBtn.bind("<Button-1>", onclick_read)
-
+registerBtn.bind()
 
 # table
 table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="headings")
