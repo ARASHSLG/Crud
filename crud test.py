@@ -10,6 +10,10 @@ persons = db['Persons']
 # functions
 
 
+def btnhovers():
+    pass
+
+
 def read(person):
     if int(person["age"]) >= 18:
         persons.insert_one(person)
@@ -68,11 +72,35 @@ def exist(person):
     return False
 
 
-def onclick_delete():
-    user_request = search_by_name.get()
-    persons.find(user_request)
-def delete_by_name():
-    pass
+def onclick_delete(e):
+    msg = messagebox.askyesno("Deleting Data", "Are You Sure ?")
+    if msg:
+        select = table.selection()
+        if select != ():
+            data = table.item(select)["values"]
+            delete(data)
+            table.delete(select)
+
+
+def delete(del_data):
+    alldata = alldata_read()
+    for data in alldata:
+        if (data["name"] == del_data[0] and data["family"] == del_data[1] and
+                data['age'] == del_data[2] and data['major'] == del_data[3]):
+            persons.delete_one(data)
+
+
+
+def selected_item(e):
+    select = table.selection()
+    if select != ():
+        data = table.item(select)["values"]
+        NAME.set(data[0])
+        FAMILY.set(data[1])
+        combobox.set(data[2])
+        AGE.set(data[3])
+
+
 def onclick_search(e):
     user_request = search_by_name.get()
     result = search(user_request)
@@ -159,11 +187,11 @@ search_deletelabel.place(x=580, y=350)
 
 # button
 registerBtn = Button(win, cursor="hand2", text='submit', bd=5,
-                     font=("arial", 15), width=12, fg="white", background="#ffba7a")
+                     font=("arial", 15), width=12, fg="white", background="#ff7a05")
 registerBtn.place(x=165, y=340)
-registerBtn.configure(textvariable=DISABLED)
+# registerBtn.configure(textvariable=DISABLED)
 registerBtn.bind("<Enter>", lambda event=None: registerBtn.configure(bg="#eeeee4", fg="black"))
-registerBtn.bind("<Leave>", lambda event=None: registerBtn.configure(fg="white", background="#ffba7a"))
+registerBtn.bind("<Leave>", lambda event=None: registerBtn.configure(fg="white", background="#ff7a05"))
 registerBtn.bind("<Button-1>", onclick_read)
 registerBtn.bind()
 
@@ -181,16 +209,22 @@ deleteBtn.place(x=700, y=450)
 # deleteBtn.configure(textvariable=DISABLED)
 deleteBtn.bind("<Enter>", lambda event=None: deleteBtn.configure(bg="#fc3f3f", fg="black"))
 deleteBtn.bind("<Leave>", lambda event=None: deleteBtn.configure(fg="white", background="#820404"))
-# deleteBtn.bind("<Button-1>", onclick_search)
+deleteBtn.bind("<Button-1>", onclick_delete)
 
-
+updateBtn = Button(win, cursor="hand2", text='Update', bd=5,
+                   font=("arial", 15), width=12, fg="white", background="#820404")
+updateBtn.place(x=700, y=450)
+# deleteBtn.configure(textvariable=DISABLED)
+updateBtn.bind("<Enter>", lambda event=None: updateBtn.configure(bg="#fc3f3f", fg="black"))
+updateBtn.bind("<Leave>", lambda event=None: updateBtn.configure(fg="white", background="#820404"))
+updateBtn.bind("<Button-1>", onclick_delete)
 # table
 table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="headings")
 columns = ("name", "family", "age", "major")
 for i in columns:
     table.heading(i, text=i.title())
     table.column(i, width=100, anchor="center")
-
+table.bind("<Button-1>", selected_item)
 table.place(x=500, y=75)
 # load_data()
 win.mainloop()
