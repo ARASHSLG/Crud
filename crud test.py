@@ -160,9 +160,11 @@ def update(old_data, new_data):
                 data['age'] == old_data[2] and data['major'] == old_data[3]):
             new = {"$set": new_data}
             persons.update_one(old_data, new)
+
+
 # main task
 win = Tk()
-win.geometry("950x600")
+win.attributes("-fullscreen", True)
 win.title("Crud Project")
 win.iconbitmap(r"icons/king_icon-icons.com_69359.ico")
 win.configure(background="#22011c", height=100, width=100, borderwidth=1, border=2)
@@ -175,55 +177,58 @@ SEARCH = StringVar()
 DELETE = StringVar()
 # texts
 name = Entry(win, bd=5, font=("arial", 15), justify="center", width=25, fg="black", bg="#eeeee4", textvariable=NAME)
-name.place(x=100, y=100)
+name.place(x=150, y=250)
 name.bind("<KeyRelease>", btn_activation)
 
 
 family = Entry(win, bd=5, font=("arial", 15), justify="center", width=25,
                fg="black", background="#eeeee4", textvariable=FAMILY)
-family.place(x=100, y=160)
+family.place(x=150, y=310)
 family.bind("<KeyRelease>", btn_activation)
 
 age = Entry(win, bd=5, font=("arial", 15), justify="center", width=25,
             fg="black", background="#eeeee4", textvariable=AGE)
-age.place(x=100, y=220)
+age.place(x=150, y=370)
 age.bind("<KeyRelease>", btn_activation)
 
 combobox = ttk.Combobox(win, font=("arial", 15), justify="center", width=24,
                         foreground="black", background="#eeeee4")
 combobox['values'] = ["computer", "electrical", 'chemistry']
-combobox.place(x=100, y=280)
+combobox.place(x=150, y=430)
 combobox.bind("<KeyRelease>", btn_activation)
 
 search_by_name = Entry(win, bd=45, font=("arial", 15), justify="center", width=30,
                        fg="#22011c", bg="#eeeee4", border=5, textvariable=SEARCH)
-search_by_name.place(x=526, y=450)
+search_by_name.place(x=526, y=245)
 search_by_name.bind("<KeyRelease>", btn_activation)
 
 # labels
 welcomelabel = Label(win, text="Welcome To Crud MiniProject",
-                     font=("segoe script", 25), fg="white", bg="#22011c")
-welcomelabel.place(x=240, y=0)
+                     font=("segoe script", 32), fg="white", bg="#22011c")
+welcomelabel.place(x=400, y=10)
+
+partlabel = Label(win, text="Adding Part", font=("elephant", 20), bd=5, fg="white", bg="#22011c")
+partlabel.place(x=200, y=175)
 
 nmlabel = Label(win, text="Name : ", font=("elephant", 15), bd=5, fg="white", bg="#22011c")
-nmlabel.place(x=5, y=100)
+nmlabel.place(x=20, y=250)
 
 fmlabel = Label(win, text="Family : ", font=("elephant", 15), bd=5, fg="white", bg="#22011c")
-fmlabel.place(x=2, y=160)
+fmlabel.place(x=17, y=310)
 
 agelabel = Label(win, text="Age : ", font=("elephant", 15), width=5, bd=5, fg="white", bg="#22011c")
-agelabel.place(x=13, y=220)
+agelabel.place(x=28, y=370)
 
 majorlabel = Label(win, text="Major : ", font=("elephant", 15), width=5, bd=5, fg="white", bg="#22011c")
-majorlabel.place(x=10, y=280)
+majorlabel.place(x=35, y=430)
 
-search_deletelabel = Label(win, text="Search Box", font=("elephant", 15), bd=5, fg="white", bg="#22011c")
-search_deletelabel.place(x=630, y=400)
+searchlabel = Label(win, text="Search Box", font=("elephant", 20), bd=5, fg="white", bg="#22011c")
+searchlabel.place(x=620, y=175)
 
 # button
 registerBtn = Button(win, cursor="hand2", text='Submit', bd=5,
                      font=("arial", 15), width=12, fg="white", background="#ff7a05")
-registerBtn.place(x=165, y=340)
+registerBtn.place(x=212, y=510)
 # registerBtn.configure(textvariable=DISABLED)
 registerBtn.bind("<Enter>", btnhovers)
 registerBtn.bind("<Leave>", default_style)
@@ -232,7 +237,7 @@ registerBtn.bind()
 
 searchBtn = Button(win, cursor="hand2", text='Search', bd=5,
                    font=("arial", 15), width=12, fg="white", background="#154c79")
-searchBtn.place(x=620, y=500)
+searchBtn.place(x=620, y=300)
 # searchBtn.configure(textvariable=DISABLED)
 searchBtn.bind("<Enter>", btnhovers)
 searchBtn.bind("<Leave>", default_style)
@@ -240,7 +245,7 @@ searchBtn.bind("<Button-1>", onclick_search)
 
 deleteBtn = Button(win, cursor="hand2", text='Delete', bd=5,
                    font=("arial", 15), width=12, fg="white", background="#820404")
-deleteBtn.place(x=755, y=310)
+deleteBtn.place(x=1355, y=510)
 # deleteBtn.configure(textvariable=DISABLED)
 deleteBtn.bind("<Enter>", btnhovers)
 deleteBtn.bind("<Leave>", default_style)
@@ -248,19 +253,23 @@ deleteBtn.bind("<Button-1>", onclick_delete)
 
 updateBtn = Button(win, cursor="hand2", text='Update', bd=5,
                    font=("arial", 15), width=12, fg="black", background="white")
-updateBtn.place(x=500, y=310)
+updateBtn.place(x=900, y=510)
 # deleteBtn.configure(textvariable=DISABLED)
 updateBtn.bind("<Enter>", btnhovers)
 updateBtn.bind("<Leave>", default_style)
 updateBtn.bind("<Button-1>", onclick_update)
 
+exit_image = PhotoImage(file="image/icons8-exit-24.png")
+exitbtn = Button(win, image=exit_image, width=25, height=25)
+exitbtn.place(x=1500, y=0)
+exitbtn.bind("<Button-1>", exit)
 # table
-table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="headings")
+table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="headings", height=15)
 columns = ("name", "family", "age", "major")
 for i in columns:
     table.heading(i, text=i.title())
-    table.column(i, width=100, anchor="center")
+    table.column(i, width=150, anchor="center")
 table.bind("<Button-1>", selected_item)
-table.place(x=500, y=75)
+table.place(x=900, y=175)
 # load_data()
 win.mainloop()
