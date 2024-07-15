@@ -10,10 +10,26 @@ persons = db['Persons']
 # functions
 
 
-def btnhovers():
-    pass
+def btnhovers(e):
+    if e.widget["text"] == "Submit":
+        registerBtn.configure(bg="#eeeee4", fg="black")
+    elif e.widget["text"] == "Search":
+        searchBtn.configure(bg="#3f91fc", fg="black")
+    elif e.widget["text"] == "Delete":
+        deleteBtn.configure(bg="#fc3f3f", fg="black")
+    else:
+        updateBtn.configure(bg="#5F5F5F", fg="white")
 
 
+def default_style(e):
+    if e.widget["text"] == "Submit":
+        registerBtn.configure(fg="white", background="#ff7a05")
+    elif e.widget["text"] == "Search":
+        searchBtn.configure(fg="white", background="#154c79")
+    elif e.widget["text"] == "Delete":
+        deleteBtn.configure(fg="white", background="#820404")
+    else:
+        updateBtn.configure(bg="white", fg="black")
 def read(person):
     if int(person["age"]) >= 18:
         persons.insert_one(person)
@@ -90,7 +106,6 @@ def delete(del_data):
             persons.delete_one(data)
 
 
-
 def selected_item(e):
     select = table.selection()
     if select != ():
@@ -125,6 +140,26 @@ def load_data():
         add_data_totable(data)
 
 
+def onclick_update(e):
+    msg = messagebox.askyesno("Updating Data", "Are You Sure ?")
+    if msg:
+        select = table.selection()
+        if select != ():
+            data = table.item(select)["values"]
+            old_data = {"name": data[0], "family": data[1], "age": data[2], "major": data[3]}
+            newdata = {"name": name.get(), "family": family.get(), "age": age.get(), "major": combobox.get()}
+            update(old_data, newdata)
+            cleandata()
+            load_data()
+
+
+def update(old_data, new_data):
+    alldata = alldata_read()
+    for data in alldata:
+        if (data["name"] == old_data[0] and data["family"] == old_data[1] and
+                data['age'] == old_data[2] and data['major'] == old_data[3]):
+            new = {"$set": new_data}
+            persons.update_one(old_data, new)
 # main task
 win = Tk()
 win.geometry("950x600")
@@ -162,13 +197,13 @@ combobox.bind("<KeyRelease>", btn_activation)
 
 search_by_name = Entry(win, bd=45, font=("arial", 15), justify="center", width=30,
                        fg="#22011c", bg="#eeeee4", border=5, textvariable=SEARCH)
-search_by_name.place(x=526, y=400)
+search_by_name.place(x=526, y=450)
 search_by_name.bind("<KeyRelease>", btn_activation)
 
 # labels
 welcomelabel = Label(win, text="Welcome To Crud MiniProject",
                      font=("segoe script", 25), fg="white", bg="#22011c")
-welcomelabel.place(x=300, y=0)
+welcomelabel.place(x=240, y=0)
 
 nmlabel = Label(win, text="Name : ", font=("elephant", 15), bd=5, fg="white", bg="#22011c")
 nmlabel.place(x=5, y=100)
@@ -182,42 +217,43 @@ agelabel.place(x=13, y=220)
 majorlabel = Label(win, text="Major : ", font=("elephant", 15), width=5, bd=5, fg="white", bg="#22011c")
 majorlabel.place(x=10, y=280)
 
-search_deletelabel = Label(win, text="Search & Delete Box", font=("elephant", 15), bd=5, fg="white", bg="#22011c")
-search_deletelabel.place(x=580, y=350)
+search_deletelabel = Label(win, text="Search Box", font=("elephant", 15), bd=5, fg="white", bg="#22011c")
+search_deletelabel.place(x=630, y=400)
 
 # button
-registerBtn = Button(win, cursor="hand2", text='submit', bd=5,
+registerBtn = Button(win, cursor="hand2", text='Submit', bd=5,
                      font=("arial", 15), width=12, fg="white", background="#ff7a05")
 registerBtn.place(x=165, y=340)
 # registerBtn.configure(textvariable=DISABLED)
-registerBtn.bind("<Enter>", lambda event=None: registerBtn.configure(bg="#eeeee4", fg="black"))
-registerBtn.bind("<Leave>", lambda event=None: registerBtn.configure(fg="white", background="#ff7a05"))
+registerBtn.bind("<Enter>", btnhovers)
+registerBtn.bind("<Leave>", default_style)
 registerBtn.bind("<Button-1>", onclick_read)
 registerBtn.bind()
 
 searchBtn = Button(win, cursor="hand2", text='Search', bd=5,
                    font=("arial", 15), width=12, fg="white", background="#154c79")
-searchBtn.place(x=550, y=450)
+searchBtn.place(x=620, y=500)
 # searchBtn.configure(textvariable=DISABLED)
-searchBtn.bind("<Enter>", lambda event=None: searchBtn.configure(bg="#3f91fc", fg="black"))
-searchBtn.bind("<Leave>", lambda event=None: searchBtn.configure(fg="white", background="#154c79"))
+searchBtn.bind("<Enter>", btnhovers)
+searchBtn.bind("<Leave>", default_style)
 searchBtn.bind("<Button-1>", onclick_search)
 
 deleteBtn = Button(win, cursor="hand2", text='Delete', bd=5,
                    font=("arial", 15), width=12, fg="white", background="#820404")
-deleteBtn.place(x=700, y=450)
+deleteBtn.place(x=755, y=310)
 # deleteBtn.configure(textvariable=DISABLED)
-deleteBtn.bind("<Enter>", lambda event=None: deleteBtn.configure(bg="#fc3f3f", fg="black"))
-deleteBtn.bind("<Leave>", lambda event=None: deleteBtn.configure(fg="white", background="#820404"))
+deleteBtn.bind("<Enter>", btnhovers)
+deleteBtn.bind("<Leave>", default_style)
 deleteBtn.bind("<Button-1>", onclick_delete)
 
 updateBtn = Button(win, cursor="hand2", text='Update', bd=5,
-                   font=("arial", 15), width=12, fg="white", background="#820404")
-updateBtn.place(x=700, y=450)
+                   font=("arial", 15), width=12, fg="black", background="white")
+updateBtn.place(x=500, y=310)
 # deleteBtn.configure(textvariable=DISABLED)
-updateBtn.bind("<Enter>", lambda event=None: updateBtn.configure(bg="#fc3f3f", fg="black"))
-updateBtn.bind("<Leave>", lambda event=None: updateBtn.configure(fg="white", background="#820404"))
-updateBtn.bind("<Button-1>", onclick_delete)
+updateBtn.bind("<Enter>", btnhovers)
+updateBtn.bind("<Leave>", default_style)
+updateBtn.bind("<Button-1>", onclick_update)
+
 # table
 table = ttk.Treeview(win, columns=("name", "family", "age", "major"), show="headings")
 columns = ("name", "family", "age", "major")
